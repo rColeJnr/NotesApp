@@ -1,24 +1,26 @@
-package com.notes.di
-
-import android.app.Application
-
-class DependencyManager private constructor(
-    application: Application
-) {
-
-    companion object {
-        private lateinit var instance: DependencyManager
-
-        fun init(application: Application) {
-            instance = DependencyManager(application)
-        }
-
-        fun noteListViewModel() = instance.rootComponent.getNoteListViewModel()
-
-    }
-
-    private val appComponent = DaggerAppComponent.factory().create(application)
-
-    private val rootComponent = DaggerRootComponent.factory().create(appComponent)
-
-}
+//package com.notes.di
+//
+//import android.app.Application
+//
+//class DependencyManager private constructor(
+//    application: Application
+//) {
+//
+//    companion object {
+//        private lateinit var instance: DependencyManager
+//
+//        fun init(application: Application) {
+//            instance = DependencyManager(application)
+//        }
+//
+//        fun noteListViewModel() = instance.rootComponent.getNoteListViewModel()
+//        fun noteDetailsViewModel() = instance.rootComponent.getNoteDetailsViewModel()
+//        fun sharedViewModel() = instance.rootComponent.getSharedViewModel()
+//
+//    }
+//
+//    private val appComponent = DaggerAppComponent.factory().create(application)
+//
+//    private val rootComponent = DaggerRootComponent.factory().create(appComponent)
+//
+//}

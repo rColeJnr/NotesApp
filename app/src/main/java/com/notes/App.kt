@@ -1,13 +1,14 @@
 package com.notes
 
 import android.app.Application
-import com.notes.di.DependencyManager
+import dagger.hilt.android.HiltAndroidApp
 
+@HiltAndroidApp
 class App : Application() {
 
-    override fun onCreate() {
-        super.onCreate()
-        DependencyManager.init(this)
-    }
+//    override fun onCreate() {
+//        super.onCreate()
+//        DependencyManager.init(this)
+//    }
 
 }

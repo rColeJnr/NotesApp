@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">Notes</string>
+    <string name="noteDeleted">Note deleted</string>
+    <string name="undo">Undo</string>
+    <string name="invalidNote">Note title or details cannot be empty</string>
+    <string name="emptyString" />
 </resources>

@@ -5,10 +5,13 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.notes.data.NoteDatabase
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+//@RootScope
+@HiltViewModel
 class NoteListViewModel @Inject constructor(
     private val noteDatabase: NoteDatabase
 ) : ViewModel() {
@@ -16,31 +19,49 @@ class NoteListViewModel @Inject constructor(
     private val _notes = MutableLiveData<List<NoteListItem>?>()
     val notes: LiveData<List<NoteListItem>?> = _notes
 
-    private val _navigateToNoteCreation = MutableLiveData<Unit?>()
-    val navigateToNoteCreation: LiveData<Unit?> = _navigateToNoteCreation
+    private val _navigateToNoteCreation = MutableLiveData<Boolean>()
+    val navigateToNoteCreation: LiveData<Boolean> = _navigateToNoteCreation
 
     init {
+        updateNoteList()
+    }
+
+    private fun getNotes() {
         viewModelScope.launch(Dispatchers.IO) {
             _notes.postValue(
                 noteDatabase.noteDao().getAll().map {
-                    NoteListItem(
-                        id = it.id,
-                        title = it.title,
-                        content = it.content,
-                    )
+                    it.toNoteListItem()
                 }
             )
         }
     }
 
     fun onCreateNoteClick() {
-        _navigateToNoteCreation.postValue(Unit)
+        _navigateToNoteCreation.postValue(true)
     }
 
-}
+    fun onAfterCreateNoteClick() {
+        _navigateToNoteCreation.postValue(false)
+    }
 
-data class NoteListItem(
-    val id: Long,
-    val title: String,
-    val content: String,
-)
+    // delete note
+    fun onDeleteNote(noteListItem: NoteListItem) {
+        viewModelScope.launch(Dispatchers.IO) {
+            noteDatabase.noteDao().apply {
+                deleteAll(noteListItem.toNoteDbo())
+            }
+        }
+    }
+
+    // reinsert note
+    fun onRestoreNote(noteListItem: NoteListItem) {
+        viewModelScope.launch(Dispatchers.IO) {
+            noteDatabase.noteDao().insertAll(noteListItem.toNoteDbo())
+        }
+        updateNoteList()
+    }
+
+    fun updateNoteList() {
+        getNotes()
+    }
+}

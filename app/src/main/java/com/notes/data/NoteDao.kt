@@ -1,8 +1,6 @@
 package com.notes.data
 
-import androidx.room.Dao
-import androidx.room.Insert
-import androidx.room.Query
+import androidx.room.*
 
 @Dao
 interface NoteDao {
@@ -12,5 +10,11 @@ interface NoteDao {
 
     @Insert
     fun insertAll(vararg notes: NoteDbo)
+
+    @Update
+    fun updateAll(vararg notes: NoteDbo)
+
+    @Delete
+    fun deleteAll(vararg notes: NoteDbo)
 
 }
