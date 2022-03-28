@@ -4,4 +4,6 @@
     <string name="undo">Undo</string>
     <string name="invalidNote">Note title or details cannot be empty</string>
     <string name="emptyString" />
+    <string name="note_details_hint">Note details</string>
+    <string name="note_title_hint">Note title</string>
 </resources>

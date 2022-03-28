@@ -27,8 +27,16 @@ class NoteDetailsViewModel @Inject constructor(
     private val _invalidNote = MutableLiveData<Unit?>()
     val invalidNote: LiveData<Unit?> = _invalidNote
 
+    private val _noteTitle = MutableLiveData<String>()
+    val noteTitle: LiveData<String> = _noteTitle
+
+    private val _noteDetails = MutableLiveData<String>()
+    val noteDetails: LiveData<String> = _noteDetails
+
     fun onGetNote(noteListItem: NoteListItem?) {
         _note.postValue(noteListItem)
+        _noteTitle.value = noteListItem?.title
+        _noteDetails.value = noteListItem?.content
     }
 
     fun onSaveNoteClick(title: String, details: String) {
@@ -36,8 +44,9 @@ class NoteDetailsViewModel @Inject constructor(
             _invalidNote.postValue(Unit)
             return
         }
+        val note = _note.value
         viewModelScope.launch(Dispatchers.IO) {
-            if (_note.value == null) {
+            if (note == null) {
                 noteDatabase.noteDao().insertAll(
                     NoteDbo(
                         title = title,
@@ -49,16 +58,25 @@ class NoteDetailsViewModel @Inject constructor(
             } else {
                 noteDatabase.noteDao().updateAll(
                     NoteDbo(
-                        id = _note.value?.id!!,
+                        id = note.id,
                         title = title,
                         content = details,
                         modifiedAt = LocalDateTime.now(),
-                        createdAt = _note.value?.createdAt ?: LocalDateTime.now()
+                        createdAt = note.createdAt
                     )
                 )
             }
         }
         onNavigateBack()
+    }
+
+    fun updateNoteTitle(title: String) {
+        _noteTitle.value = title
+    }
+
+
+    fun updateNoteDetails(details: String) {
+        _noteDetails.value = details
     }
 
     private fun onNavigateBack() {

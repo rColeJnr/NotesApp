@@ -36,11 +36,16 @@ class NoteDetailsFragment : ViewBindingFragment<FragmentNoteDetailsBinding>(
             viewModel.onGetNote(it)
         }
 
-        viewModel.note.observe(
+        viewModel.noteTitle.observe(
             viewLifecycleOwner
         ) {
-            viewBinding.etNoteTitle.setText(it?.title ?: getString(R.string.emptyString))
-            viewBinding.etNoteDetails.setText(it?.content ?: getString(R.string.emptyString))
+            viewBinding.etNoteTitle.setText(it)
+        }
+
+        viewModel.noteDetails.observe(
+            viewLifecycleOwner
+        ) {
+            viewBinding.etNoteDetails.setText(it)
         }
 
         viewBinding.btnSaveNote.setOnClickListener {
@@ -64,6 +69,11 @@ class NoteDetailsFragment : ViewBindingFragment<FragmentNoteDetailsBinding>(
             activity?.onBackPressed()
         }
     }
+
+//    override fun onSaveInstanceState(outState: Bundle) {
+//
+//        super.onSaveInstanceState(outState)
+//    }
 
     override fun onPause() {
         super.onPause()
