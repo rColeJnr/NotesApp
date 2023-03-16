@@ -1,5 +1,6 @@
 package com.notes.ui.list
 
+
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -72,14 +73,15 @@ class NoteListFragment : ViewBindingFragment<FragmentNoteListBinding>(
                     .navigateTo(
                         NoteDetailsFragment()
                     )
+                viewModel.onAfterCreateNoteClick()
             }
         }
 
-//        sharedViewModel.newNoteAdded.observe(
-//            viewLifecycleOwner
-//        ) {
-//            viewModel.updateNoteList()
-//        }
+        sharedViewModel.newNoteAdded.observe(
+            viewLifecycleOwner
+        ) {
+            viewModel.updateNoteList()
+        }
     }
 
     // navigate to detailsFragment on note click

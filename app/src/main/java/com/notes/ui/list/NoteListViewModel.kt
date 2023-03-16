@@ -7,7 +7,7 @@ import androidx.lifecycle.viewModelScope
 import com.notes.data.NoteDatabase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -24,22 +24,22 @@ class NoteListViewModel @Inject constructor(
     val navigateToNoteCreation: LiveData<Boolean> = _navigateToNoteCreation
 
     init {
-        getNotes()
+        updateNoteList()
     }
 
     private fun getNotes() {
         viewModelScope.launch(Dispatchers.IO) {
-            noteDatabase.noteDao().getAll().onEach { notes ->
-                _notes.postValue(
-                    notes.map { it.toNoteListItem() }
-                )
+            noteDatabase.noteDao().getAll().collectLatest { list ->
+                _notes.postValue(list.map { it.toNoteListItem() })
             }
         }
     }
 
-    // Use SingleLiveEvent/EventLiveData/SingleLiveData
     fun onCreateNoteClick() {
-        _navigateToNoteCreation.value = true
+        _navigateToNoteCreation.postValue(true)
+    }
+
+    fun onAfterCreateNoteClick() {
         _navigateToNoteCreation.postValue(false)
     }
 
@@ -57,5 +57,10 @@ class NoteListViewModel @Inject constructor(
         viewModelScope.launch(Dispatchers.IO) {
             noteDatabase.noteDao().insertAll(noteListItem.toNoteDbo())
         }
+        updateNoteList()
+    }
+
+    fun updateNoteList() {
+        getNotes()
     }
 }
